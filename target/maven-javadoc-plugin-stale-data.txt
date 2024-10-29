@@ -1,0 +1,46 @@
+-J-Duser.language=
+-J-Duser.country=
+@options
+@packages
+-encoding
+'UTF-8'
+-protected
+-source
+'23'
+-sourcepath
+'C:/NetBeansProjects/Integration/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2024. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/NetBeansProjects/Integration/target/reports/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Integration 1.0-prototype API'
+-use
+-version
+-windowtitle
+'Integration 1.0-prototype API'
+pl.polsl.integration.controller
+pl.polsl.integration
+pl.polsl.integration.model
+pl.polsl.integration.view
+C:\NetBeansProjects\Integration\src\main\java = 1730214061043
+C:\NetBeansProjects\Integration\target\reports\apidocs\allclasses-index.html = 1730214570122
+C:\NetBeansProjects\Integration\target\reports\apidocs\allpackages-index.html = 1730214570128
+C:\NetBeansProjects\Integration\target\reports\apidocs\element-list = 1730214569853
+C:\NetBeansProjects\Integration\target\reports\apidocs\help-doc.html = 1730214570197
+C:\NetBeansProjects\Integration\target\reports\apidocs\index-all.html = 1730214570181
+C:\NetBeansProjects\Integration\target\reports\apidocs\index.html = 1730214570092
+C:\NetBeansProjects\Integration\target\reports\apidocs\member-search-index.js = 1730214570137
+C:\NetBeansProjects\Integration\target\reports\apidocs\module-search-index.js = 1730214570130
+C:\NetBeansProjects\Integration\target\reports\apidocs\overview-summary.html = 1730214570191
+C:\NetBeansProjects\Integration\target\reports\apidocs\overview-tree.html = 1730214570083
+C:\NetBeansProjects\Integration\target\reports\apidocs\package-search-index.js = 1730214570132
+C:\NetBeansProjects\Integration\target\reports\apidocs\search.html = 1730214570187
+C:\NetBeansProjects\Integration\target\reports\apidocs\serialized-form.html = 1730214569977
+C:\NetBeansProjects\Integration\target\reports\apidocs\tag-search-index.js = 1730214570139
+C:\NetBeansProjects\Integration\target\reports\apidocs\type-search-index.js = 1730214570135

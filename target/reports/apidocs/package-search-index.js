@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"pl.polsl.integration"},{"l":"pl.polsl.integration.controller"},{"l":"pl.polsl.integration.model"},{"l":"pl.polsl.integration.view"}];updateSearchResults();

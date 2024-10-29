@@ -1,0 +1,5 @@
+pl\polsl\integration\controller\IntegrationController.class
+pl\polsl\integration\Integration.class
+pl\polsl\integration\view\IntegrationView.class
+pl\polsl\integration\model\IntegrationException.class
+pl\polsl\integration\model\IntegrationModel.class
