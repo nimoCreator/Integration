@@ -5,16 +5,11 @@ package pl.polsl.integration.model;
  */
 public class IntegrationException extends Exception {
     /**
-     * The error message.
-     */
-    String message;
-
-    /**
      * Constructor with a custom error message.
      * @param message The error message.
      */
     public IntegrationException(String message) {
-        this.message = message;
+        super(message);
     }
 
     /**
@@ -22,6 +17,6 @@ public class IntegrationException extends Exception {
      * @return The error message.
      */
     public String whatHappened() {
-        return message;
+        return super.getMessage();
     }
 }
