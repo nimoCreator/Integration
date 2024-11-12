@@ -1,11 +1,11 @@
 package pl.polsl.integration;
 
-import pl.polsl.integration.controller.IntegrationController;
+import pl.polsl.integration.GUI.IntegrationJFrame;
 
 /**
  * Main class to initiate the integration application.
  * @author Sebastian Legierski InfK4
- * @version 1.0
+ * @version 2.0
  */
 public class Integration {
 
@@ -28,7 +28,6 @@ public class Integration {
      * -f : polynomial function in format a*x^n + b*x^m + ... (no spaces)
      */
     public static void main(String[] args) {
-        IntegrationController integrationController = new IntegrationController(args);
-        integrationController.run();
+        IntegrationJFrame.start(args);      
     }
 }

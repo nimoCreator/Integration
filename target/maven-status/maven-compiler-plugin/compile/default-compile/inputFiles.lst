@@ -1,5 +1,11 @@
 C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\model\IntegrationModel.java
 C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\view\IntegrationView.java
 C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\controller\IntegrationController.java
+C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\model\DivisionIntegrationStrategy.java
 C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\Integration.java
+C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\model\IntegrationStrategy.java
+C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\model\WidthIntegrationStrategy.java
+C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\model\AbstractIntegrationStrategy.java
+C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\GUI\IntegrationJFrame.java
+C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\model\Pair.java
 C:\NetBeansProjects\Integration\src\main\java\pl\polsl\integration\model\IntegrationException.java

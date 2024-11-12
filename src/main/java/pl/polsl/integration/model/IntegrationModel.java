@@ -1,6 +1,8 @@
 package pl.polsl.integration.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Model class for handling parameters and performing trapezoidal integration.
  * @author Sebastian Legierski InfK4
+ * @version 2.0
  */
 public class IntegrationModel {
 
@@ -18,7 +21,9 @@ public class IntegrationModel {
     private String function;
     private boolean isReady = false;
     private char mode;
-
+    private final List<Pair<Double, Double>> resultTable = new ArrayList<>();
+    private IntegrationStrategy strategy;
+    
     /**
      * Default constructor.
      */
@@ -103,13 +108,25 @@ public class IntegrationModel {
     }
 
     /**
-     * Sets the mode for integration calculation ('d' for divisions, 'w' for width).
-     * @param mode Character representing the mode.
+     * Sets the integration mode by creating the appropriate strategy.
+     * 
+     * @param mode Character representing the mode ('d' for divisions, 'w' for width).
      */
     public void setMode(char mode) {
-        this.mode = mode;
+        if (mode == 'd') {
+            this.setStrategy(new DivisionIntegrationStrategy());
+        } else if (mode == 'w') {
+            this.setStrategy(new WidthIntegrationStrategy());
+        }
     }
-
+    /**
+     * Sets the integration strategy to be used.
+     * @param strategy The integration strategy.
+     */
+    public void setStrategy(IntegrationStrategy strategy) {
+        this.strategy = strategy;
+    }
+    
     /**
      * Returns the mode of integration calculation.
      * @return The integration mode.
@@ -127,7 +144,7 @@ public class IntegrationModel {
     }
 
     /**
-     * Sets the width of trapesoids for integration.
+     * Sets the width of trapezoids for integration.
      * @param width Desired precision level, lower the value - higher the precision.
      */
     public void setWidth(double width) {
@@ -188,56 +205,27 @@ public class IntegrationModel {
      * @return The integration result.
      * @throws IntegrationException if an unknown mode is selected.
      */
-    public double calculate() throws IntegrationException {
-        double sum = 0.0;
-
-        switch (mode) {
-            case 'd' ->                 {
-                    // Sum d trapesiods
-                    
-                    double step = (upperBound - lowerBound) / divisions;
-                    for (int i = 0; i < divisions; i++) {
-                        double x1 = lowerBound + i * step;
-                        double x2 = x1 + step;
-                        sum += (functionValue(x1) + functionValue(x2)) * step / 2.0;
-                    }                      }
-            case 'w' ->                 {
-                    // Set-width trapesiods
-                    
-                    double step = width;
-                    double x = lowerBound;
-                    while (x < upperBound) {
-                        double nextX = x + step;
-                        sum += (functionValue(x) + functionValue(nextX)) * step / 2.0;
-                        x = nextX;
-                    }                      }
-            default -> throw new IntegrationException("Unknown mode selected: " + mode);
-        }
-        return sum;
-    }
-
-    /**
-     * Evaluates the polynomial function at a given x value.
-     * @param x The x-value for evaluation.
-     * @return The result of the function at x.
+        /**
+     * Calculates the integration result using the selected strategy.
+     * 
+     * @return The result of the integration.
+     * @throws IntegrationException if no strategy is set.
      */
-    private double functionValue(double x) {
-        double result = 0.0;
-
-        Pattern termPattern = Pattern.compile("([+-]?\\d*\\.?\\d*)\\*?x\\^?(\\d*)");
-        Matcher matcher = termPattern.matcher(function);
-
-        while (matcher.find()) {
-            String coefficient = matcher.group(1);
-            String exponent = matcher.group(2);
-
-            double coef = coefficient.isEmpty() || coefficient.equals("+") || coefficient.equals("-") ? (coefficient.equals("-") ? -1 : 1) : Double.parseDouble(coefficient);
-            int exp = exponent.isEmpty() ? 1 : Integer.parseInt(exponent);
-
-            result += coef * Math.pow(x, exp);
+    public double calculate() throws IntegrationException {
+        if (strategy == null) {
+            throw new IntegrationException("Integration strategy not set.");
         }
-        
-        return result;
+        // double wd, double lowerBound, double upperBound, String function, List<Pair<Double, Double>> resultTable
+        double wd = this.mode == 'd' ? this.divisions : this.width;
+        return strategy.integrate(wd, lowerBound, upperBound, function, resultTable);
+    }
+    
+    /**
+     * Returns the List o X and Y's of the function after calculating
+     * @return List of Pairs of X's and Y's being the result of integration of the INtegration
+     */
+    public List<Pair<Double, Double>> getResultTable() {
+        return resultTable;
     }
 }
 

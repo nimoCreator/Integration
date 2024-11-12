@@ -2,19 +2,17 @@ package pl.polsl.integration.model;
 
 /**
  * Custom exception for errors in the IntegrationModel.
+ * Author: Sebastian Legierski InfK4
+ * @version 2.0
  */
 public class IntegrationException extends Exception {
-    /**
-     * The error message.
-     */
-    String message;
 
     /**
      * Constructor with a custom error message.
      * @param message The error message.
      */
     public IntegrationException(String message) {
-        this.message = message;
+        super(message);  // Pass the message to the superclass constructor
     }
 
     /**
@@ -22,6 +20,6 @@ public class IntegrationException extends Exception {
      * @return The error message.
      */
     public String whatHappened() {
-        return message;
+        return super.getMessage();  // Use getMessage() inherited from Exception
     }
 }
