@@ -3,13 +3,13 @@ package pl.polsl.integration.controller;
 import java.util.List;
 import pl.polsl.integration.model.IntegrationException;
 import pl.polsl.integration.model.IntegrationModel;
-import pl.polsl.integration.model.Pair;
+import pl.polsl.integration.model.PairRecord;
 import pl.polsl.integration.view.IntegrationView;
 
 /**
  * Controller class for handling integration parameters and executing integration.
  * Author: Sebastian Legierski, InfK4
- * @version 2.0
+ * @version 3.0 prototype
  */
 public class IntegrationController {
     private final IntegrationModel integrationModel = new IntegrationModel();
@@ -250,7 +250,7 @@ public class IntegrationController {
      * 
      * @return A list of pairs, where each pair contains an x-value and the corresponding function value.
      */
-    public List<Pair<Double, Double>> getResultTable() 
+    public List<PairRecord> getResultTable() 
     {
         return this.integrationModel.getResultTable();
     }

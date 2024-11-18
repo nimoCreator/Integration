@@ -5,7 +5,7 @@ import pl.polsl.integration.GUI.IntegrationJFrame;
 /**
  * Main class to initiate the integration application.
  * @author Sebastian Legierski InfK4
- * @version 2.0
+ * @version 3.0 prototype
  */
 public class Integration {
 

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Interface for integration strategies, allowing different approaches to integration.
  * 
- * @version 1.0
+ * @version 3.0 prototype
  */
 public interface IntegrationStrategy {
     
@@ -20,5 +20,5 @@ public interface IntegrationStrategy {
      * @return The result of the integration.
      * @throws IntegrationException If any error occurs during integration.
      */
-    double integrate(double wd, double lowerBound, double upperBound, String function, List<Pair<Double, Double>> resultTable) throws IntegrationException;
+    double integrate(double wd, double lowerBound, double upperBound, String function, List<PairRecord> resultTable) throws IntegrationException;
 }

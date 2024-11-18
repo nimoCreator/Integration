@@ -5,13 +5,13 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import pl.polsl.integration.controller.IntegrationController;
 import pl.polsl.integration.model.IntegrationException;
-import pl.polsl.integration.model.Pair;
+import pl.polsl.integration.model.PairRecord;
 
 /**
  * GUI class for handling user interaction and displaying the results of trapezoidal integration.
  * Provides a JFrame interface for setting parameters, performing integration, and viewing the results.
  * 
- * @version 2.0
+ * @version 3.0 prototype
  * 
  * @see IntegrationController
  * @see Pair
@@ -110,13 +110,13 @@ public class IntegrationJFrame extends javax.swing.JFrame {
      * Retrieves the data from the controller's result table and populates the JTable with this data.
      */
     public void updateResultTable() {
-        List<Pair<Double, Double>> results = integrationController.getResultTable();
+        List<PairRecord> results = integrationController.getResultTable();
 
         DefaultTableModel model = (DefaultTableModel) jTableResult.getModel();
         model.setRowCount(0);
 
-        for (Pair<Double, Double> pair : results) {
-            model.addRow(new Object[]{pair.getX(), pair.getY()});
+        for (PairRecord pair : results) {
+            model.addRow(new Object[]{pair.x(), pair.y()});
         }
 
         model.fireTableDataChanged();

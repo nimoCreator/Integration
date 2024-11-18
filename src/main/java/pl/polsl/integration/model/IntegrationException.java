@@ -3,7 +3,7 @@ package pl.polsl.integration.model;
 /**
  * Custom exception for errors in the IntegrationModel.
  * Author: Sebastian Legierski InfK4
- * @version 2.0
+ * @version 3.0 prototype
  */
 public class IntegrationException extends Exception {
 

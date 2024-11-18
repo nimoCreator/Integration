@@ -6,7 +6,7 @@ import java.util.Scanner;
  * View class for handling user interactions and displaying messages.
  * Provides methods for displaying errors, integration formatting guidance, and input prompts.
  * @author Sebastian Legierski InfK4
- * @version 1.0
+ * @version 3.0 prototype
  */
 public class IntegrationView {
 

@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+//import lombok.*;
 
 /**
  * Model class for handling parameters and performing trapezoidal integration.
  * @author Sebastian Legierski InfK4
- * @version 2.0
+ * @version 3.0 prototype
  */
+//@AllArgsConstructor
+//@Getter
+//@Setter
+//@EqualsAndHashCode
+//@ToString
 public class IntegrationModel {
 
     private double width;
@@ -21,7 +25,7 @@ public class IntegrationModel {
     private String function;
     private boolean isReady = false;
     private char mode;
-    private final List<Pair<Double, Double>> resultTable = new ArrayList<>();
+    private final List<PairRecord> resultTable = new ArrayList<>();
     private IntegrationStrategy strategy;
     
     /**
@@ -224,7 +228,7 @@ public class IntegrationModel {
      * Returns the List o X and Y's of the function after calculating
      * @return List of Pairs of X's and Y's being the result of integration of the INtegration
      */
-    public List<Pair<Double, Double>> getResultTable() {
+    public List<PairRecord> getResultTable() {
         return resultTable;
     }
 }
