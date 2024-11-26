@@ -52,55 +52,50 @@ public class IntegrationModel {
             }
         }
 
-        try {
             
-            if ( !params.containsKey("-w") && !params.containsKey("-d") ) {
-                throw new IntegrationException("Parameter either '-d' (divisions) or '-w' (width) is required.");
-            }
-            
-            if (params.containsKey("-d")) {
-                divisions = Integer.parseInt(params.get("-d"));
-                mode = 'd';
-                
-                if(divisions < 1)
-                    throw new IntegrationException("Parameter -d shold be a positive integer.");
-            }
-            else
-            {
-                width = Double.parseDouble(params.get("-w"));
-                mode = 'w';
-                if(width < 0)
-                    throw new IntegrationException("Parameter -w cannot be negative!");
-            }
-            
-            if (!params.containsKey("-min")) {
-                throw new IntegrationException("Parameter '-min' (lower bound) is required.");
-            }
-            lowerBound = Double.parseDouble(params.get("-min"));
-
-            if (!params.containsKey("-max")) {
-                throw new IntegrationException("Parameter '-max' (upper bound) is required.");
-            }
-            upperBound = Double.parseDouble(params.get("-max"));
-
-            if (!params.containsKey("-f")) {
-                throw new IntegrationException("Parameter '-f' (function) is required.");
-            }
-            function = params.get("-f");
-            
-            if( lowerBound > upperBound )
-                flipBounds();
-
-            if (!function.matches("([-+]?\\d*\\*?x(\\^\\d+)?)([-+]\\d*\\*?x(\\^\\d+)?)*")) 
-            {
-                throw new IntegrationException("Invalid polynomial format.");
-            }
-
-            isReady = true;
-
-        } catch (NumberFormatException e) {
-            throw new IntegrationException("Invalid number format in parameters: " + e.getMessage());
+        if ( !params.containsKey("-w") && !params.containsKey("-d") ) {
+            throw new IntegrationException("Parameter either '-d' (divisions) or '-w' (width) is required.");
         }
+        
+        if (params.containsKey("-d")) {
+            divisions = Integer.parseInt(params.get("-d"));
+            mode = 'd';
+            
+            if(divisions < 1)
+                throw new IntegrationException("Parameter -d shold be a positive integer.");
+        }
+        else
+        {
+            width = Double.parseDouble(params.get("-w"));
+            mode = 'w';
+            if(width < 0)
+                throw new IntegrationException("Parameter -w cannot be negative!");
+        }
+        
+        if (!params.containsKey("-min")) {
+            throw new IntegrationException("Parameter '-min' (lower bound) is required.");
+        }
+        lowerBound = Double.parseDouble(params.get("-min"));
+
+        if (!params.containsKey("-max")) {
+            throw new IntegrationException("Parameter '-max' (upper bound) is required.");
+        }
+        upperBound = Double.parseDouble(params.get("-max"));
+
+        if (!params.containsKey("-f")) {
+            throw new IntegrationException("Parameter '-f' (function) is required.");
+        }
+        function = params.get("-f");
+        
+        if( lowerBound > upperBound )
+            flipBounds();
+
+        if (!function.matches("([-+]?\\d*\\*?x(\\^\\d+)?)([-+]\\d*\\*?x(\\^\\d+)?)*")) 
+        {
+            throw new IntegrationException("Invalid polynomial format.");
+        }
+
+        isReady = true;
     }
 
     /**

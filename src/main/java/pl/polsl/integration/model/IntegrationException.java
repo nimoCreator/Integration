@@ -6,7 +6,6 @@ package pl.polsl.integration.model;
  * @version 3.0 prototype
  */
 public class IntegrationException extends Exception {
-
     /**
      * Constructor with a custom error message.
      * @param message The error message.
