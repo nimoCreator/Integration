@@ -3,9 +3,10 @@ package pl.polsl.integration.model;
 /**
  * Custom exception for errors in the IntegrationModel.
  * Author: Sebastian Legierski InfK4
- * @version 3.0 prototype
+ * @version 3.0 final
  */
 public class IntegrationException extends Exception {
+
     /**
      * Constructor with a custom error message.
      * @param message The error message.

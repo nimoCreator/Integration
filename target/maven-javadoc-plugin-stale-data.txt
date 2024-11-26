@@ -1,0 +1,50 @@
+-J-Duser.language=
+-J-Duser.country=
+@options
+@packages
+-classpath
+'C:/Users/Sebas/.m2/repository/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'23'
+-sourcepath
+'P:/Integration/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2024. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'P:/Integration/target/reports/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Integration 3.0-prototype API'
+-use
+-version
+-windowtitle
+'Integration 3.0-prototype API'
+pl.polsl.integration.controller
+pl.polsl.integration.GUI
+pl.polsl.integration
+pl.polsl.integration.model
+pl.polsl.integration.view
+C:\Users\Sebas\.m2\repository\org\projectlombok\lombok\1.18.36\lombok-1.18.36.jar = 1732617048079
+P:\Integration\src\main\java = 1730744599810
+P:\Integration\target\reports\apidocs\allclasses-index.html = 1732618567065
+P:\Integration\target\reports\apidocs\allpackages-index.html = 1732618567067
+P:\Integration\target\reports\apidocs\element-list = 1732618566872
+P:\Integration\target\reports\apidocs\help-doc.html = 1732618567091
+P:\Integration\target\reports\apidocs\index-all.html = 1732618567086
+P:\Integration\target\reports\apidocs\index.html = 1732618567035
+P:\Integration\target\reports\apidocs\member-search-index.js = 1732618567070
+P:\Integration\target\reports\apidocs\module-search-index.js = 1732618567068
+P:\Integration\target\reports\apidocs\overview-summary.html = 1732618567088
+P:\Integration\target\reports\apidocs\overview-tree.html = 1732618567032
+P:\Integration\target\reports\apidocs\package-search-index.js = 1732618567068
+P:\Integration\target\reports\apidocs\search.html = 1732618567087
+P:\Integration\target\reports\apidocs\serialized-form.html = 1732618566954
+P:\Integration\target\reports\apidocs\tag-search-index.js = 1732618567071
+P:\Integration\target\reports\apidocs\type-search-index.js = 1732618567069

@@ -6,7 +6,7 @@ import java.util.function.BiFunction;
 /**
  * Strategy for performing integration by dividing the area into a specified number of trapezoids.
  * 
- * @version 3.0 prototype
+ * @version 3.0 final
  */
 public class DivisionIntegrationStrategy extends AbstractIntegrationStrategy {
 
@@ -36,7 +36,7 @@ public class DivisionIntegrationStrategy extends AbstractIntegrationStrategy {
 
             sum += trapezoidArea.apply(y1, y2);
         }
-        resultTable.add( 
+            resultTable.add( 
                 new PairRecord(
                         lowerBound + (wd) * step, 
                         functionValue(lowerBound + (wd) * step, function)

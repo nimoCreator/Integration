@@ -4,37 +4,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-//import lombok.*;
+import lombok.*;
 
 /**
  * Model class for handling parameters and performing trapezoidal integration.
  * @author Sebastian Legierski InfK4
- * @version 3.0 prototype
+ * @version 3.0 final
  */
-//@AllArgsConstructor
-//@Getter
-//@Setter
-//@EqualsAndHashCode
-//@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class IntegrationModel {
-
+    @Getter @Setter
     private double width;
+    @Getter @Setter
     private int divisions;
     private double lowerBound;
     private double upperBound;
     private String function;
-    private boolean isReady = false;
-    private char mode;
-    private final List<PairRecord> resultTable = new ArrayList<>();
+    private ModelState modelState = ModelState.empty;
+    private IntegrationStrategyEnum integrationStrategy;
+    private List<PairRecord> resultTable = new ArrayList<>();
     private IntegrationStrategy strategy;
     
-    /**
-     * Default constructor.
-     */
-    public IntegrationModel()
-    {
-        
-    }
     
     /**
      * Reads command-line arguments for integration parameters.
@@ -48,122 +43,124 @@ public class IntegrationModel {
             if (i + 1 < args.length) {
                 params.put(args[i], args[i + 1]);
             } else {
+                this.modelState = ModelState.error;
                 throw new IntegrationException("Missing value for parameter: " + args[i]);
             }
         }
 
+        try {
             
-        if ( !params.containsKey("-w") && !params.containsKey("-d") ) {
-            throw new IntegrationException("Parameter either '-d' (divisions) or '-w' (width) is required.");
-        }
+            if ( !params.containsKey("-w") && !params.containsKey("-d") ) {
+                this.modelState = ModelState.error;
+                throw new IntegrationException("Parameter either '-d' (divisions) or '-w' (width) is required.");
+            }
         
-        if (params.containsKey("-d")) {
-            divisions = Integer.parseInt(params.get("-d"));
-            mode = 'd';
+            if (params.containsKey("-d")) {
+                divisions = Integer.parseInt(params.get("-d"));
+                integrationStrategy = IntegrationStrategyEnum.DivisionsCount;
+                
+                if(divisions < 1)
+                {
+                    this.modelState = ModelState.error;
+                    throw new IntegrationException("Parameter -d shold be a positive integer.");
+                }
+            }
+            else
+            {
+                width = Double.parseDouble(params.get("-w"));
+                integrationStrategy = IntegrationStrategyEnum.TrapesoidWidth;
+                if(width < 0)
+                {
+                    this.modelState = ModelState.error;
+                    throw new IntegrationException("Parameter -w cannot be negative!");
+                }
+            }
             
-            if(divisions < 1)
-                throw new IntegrationException("Parameter -d shold be a positive integer.");
-        }
-        else
-        {
-            width = Double.parseDouble(params.get("-w"));
-            mode = 'w';
-            if(width < 0)
-                throw new IntegrationException("Parameter -w cannot be negative!");
-        }
-        
-        if (!params.containsKey("-min")) {
-            throw new IntegrationException("Parameter '-min' (lower bound) is required.");
-        }
-        lowerBound = Double.parseDouble(params.get("-min"));
+            if (!params.containsKey("-min")) {
+                this.modelState = ModelState.error;
+                throw new IntegrationException("Parameter '-min' (lower bound) is required.");
+            }
+            lowerBound = Double.parseDouble(params.get("-min"));
 
-        if (!params.containsKey("-max")) {
-            throw new IntegrationException("Parameter '-max' (upper bound) is required.");
-        }
-        upperBound = Double.parseDouble(params.get("-max"));
+            if (!params.containsKey("-max")) {
+                this.modelState = ModelState.error;
+                throw new IntegrationException("Parameter '-max' (upper bound) is required.");
+            }
+            upperBound = Double.parseDouble(params.get("-max"));
 
-        if (!params.containsKey("-f")) {
-            throw new IntegrationException("Parameter '-f' (function) is required.");
-        }
-        function = params.get("-f");
-        
-        if( lowerBound > upperBound )
-            flipBounds();
+            if (!params.containsKey("-f")) {
+                this.modelState = ModelState.error;
+                throw new IntegrationException("Parameter '-f' (function) is required.");
+            }
+            function = params.get("-f");
+            
+            if( lowerBound > upperBound )
+                flipBounds();
 
-        if (!function.matches("([-+]?\\d*\\*?x(\\^\\d+)?)([-+]\\d*\\*?x(\\^\\d+)?)*")) 
-        {
-            throw new IntegrationException("Invalid polynomial format.");
-        }
+            if (!function.matches("([-+]?\\d*\\*?x(\\^\\d+)?)([-+]\\d*\\*?x(\\^\\d+)?)*")) 
+            {
+                this.modelState = ModelState.error;
+                throw new IntegrationException("Invalid polynomial format.");
+            }
 
-        isReady = true;
+            modelState = ModelState.ready;
+
+        } catch (NumberFormatException e) {
+            this.modelState = ModelState.error;
+            throw new IntegrationException("Invalid number format in parameters: " + e.getMessage());
+        }
     }
 
     /**
-     * Checks if the model is ready to calculate based on parsed parameters.
-     * @return true if model is ready, false otherwise.
+     * Checks if the model is in a READY state.
+     * 
+     * @return true if the state is READY, false otherwise.
      */
     public boolean isReady() {
-        return isReady;
+        return this.modelState == ModelState.ready;
     }
 
     /**
      * Sets the integration mode by creating the appropriate strategy.
      * 
      * @param mode Character representing the mode ('d' for divisions, 'w' for width).
+     * @throws IllegalArgumentException if the mode is invalid.
      */
-    public void setMode(char mode) {
-        if (mode == 'd') {
-            this.setStrategy(new DivisionIntegrationStrategy());
-        } else if (mode == 'w') {
-            this.setStrategy(new WidthIntegrationStrategy());
+    public void setMode(char mode) throws IllegalArgumentException
+    {
+        switch (mode) {
+            case 'd' -> this.setStrategy(new DivisionIntegrationStrategy());
+            case 'w' -> this.setStrategy(new WidthIntegrationStrategy());
+            default -> throw new IllegalArgumentException("Invalid integration mode: " + mode);
         }
     }
+
+    
+    
     /**
-     * Sets the integration strategy to be used.
-     * @param strategy The integration strategy.
+     * Sets the integration mode by creating the appropriate strategy.
+     * 
+     * @param integrationStrategy The integration strategy to use.
+     * @throws IllegalArgumentException if the strategy is invalid.
+     */
+    public void setIntegrationStrategy(IntegrationStrategyEnum integrationStrategy) throws IllegalArgumentException
+    {
+        this.integrationStrategy = integrationStrategy;
+        switch (integrationStrategy) {
+            case IntegrationStrategyEnum.DivisionsCount -> this.setStrategy(new DivisionIntegrationStrategy());
+            case IntegrationStrategyEnum.TrapesoidWidth -> this.setStrategy(new WidthIntegrationStrategy());
+            default -> throw new IllegalArgumentException("Invalid integration strategy: " + integrationStrategy);
+        }
+    }
+
+
+    /**
+     * Sets the integration strategy.
+     * 
+     * @param strategy The integration strategy to use.
      */
     public void setStrategy(IntegrationStrategy strategy) {
         this.strategy = strategy;
-    }
-    
-    /**
-     * Returns the mode of integration calculation.
-     * @return The integration mode.
-     */
-    public char getMode() {
-        return mode;
-    }
-
-    /**
-     * Sets the number of divisions.
-     * @param divisions Number of trapezoids.
-     */
-    public void setDivisions(int divisions) {
-        this.divisions = divisions;
-    }
-
-    /**
-     * Sets the width of trapezoids for integration.
-     * @param width Desired precision level, lower the value - higher the precision.
-     */
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
-    /**
-     * Sets the lower bound for integration.
-     * @param lowerBound The starting point.
-     */
-    public void setLowerBound(double lowerBound) {
-        this.lowerBound = lowerBound;
-    }
-
-    /**
-     * Sets the upper bound for integration.
-     * @param upperBound The ending point.
-     */
-    public void setUpperBound(double upperBound) {
-        this.upperBound = upperBound;
     }
 
     /**
@@ -175,36 +172,7 @@ public class IntegrationModel {
         upperBound = lowerBound - upperBound;
     }
 
-        /**
-     * Gets the lower bound for integration.
-     * @return The lower bound.
-     */
-    public double getLowerBound() {
-        return lowerBound;
-    }
-
     /**
-     * Gets the upper bound for integration.
-     * @return The upper bound.
-     */
-    public double getUpperBound() {
-        return upperBound;
-    }
-
-    /**
-     * Sets the polynomial function to integrate.
-     * @param function A polynomial in the format "a*x^n + b*x^m + ...".
-     */
-    public void setFunction(String function) {
-        this.function = function;
-    }
-
-    /**
-     * Calculates the result of trapezoidal integration.
-     * @return The integration result.
-     * @throws IntegrationException if an unknown mode is selected.
-     */
-        /**
      * Calculates the integration result using the selected strategy.
      * 
      * @return The result of the integration.
@@ -214,17 +182,142 @@ public class IntegrationModel {
         if (strategy == null) {
             throw new IntegrationException("Integration strategy not set.");
         }
-        // double wd, double lowerBound, double upperBound, String function, List<Pair<Double, Double>> resultTable
-        double wd = this.mode == 'd' ? this.divisions : this.width;
+        double wd = 
+            this.integrationStrategy == IntegrationStrategyEnum.DivisionsCount ? this.divisions : 
+            this.integrationStrategy == IntegrationStrategyEnum.TrapesoidWidth ? this.width : 0;
+        
         return strategy.integrate(wd, lowerBound, upperBound, function, resultTable);
     }
+
+    /**
+     * Retries range of integration
+     * @return PairRecord with lower and upper bound
+     */
+    public PairRecord getRange() {
+        return new PairRecord(lowerBound, upperBound);
+    }
+    
+    
+    
+    
+    // LAMBOKN'T
     
     /**
-     * Returns the List o X and Y's of the function after calculating
-     * @return List of Pairs of X's and Y's being the result of integration of the INtegration
-     */
-    public List<PairRecord> getResultTable() {
-        return resultTable;
-    }
+    * Gets the width value.
+    *
+    * @return the width value.
+    */
+   public double getWidth() {
+       return width;
+   }
+
+   /**
+    * Sets the width value.
+    *
+    * @param width the width value to set.
+    */
+   public void setWidth(double width) {
+       this.width = width;
+   }
+
+   /**
+    * Gets the number of divisions.
+    *
+    * @return the number of divisions.
+    */
+   public int getDivisions() {
+       return divisions;
+   }
+
+   /**
+    * Sets the number of divisions.
+    *
+    * @param divisions the number of divisions to set.
+    */
+   public void setDivisions(int divisions) {
+       this.divisions = divisions;
+   }
+
+   /**
+    * Gets the lower bound value.
+    *
+    * @return the lower bound value.
+    */
+   public double getLowerBound() {
+       return lowerBound;
+   }
+
+   /**
+    * Sets the lower bound value.
+    *
+    * @param lowerBound the lower bound value to set.
+    */
+   public void setLowerBound(double lowerBound) {
+       this.lowerBound = lowerBound;
+   }
+
+   /**
+    * Gets the upper bound value.
+    *
+    * @return the upper bound value.
+    */
+   public double getUpperBound() {
+       return upperBound;
+   }
+
+   /**
+    * Sets the upper bound value.
+    *
+    * @param upperBound the upper bound value to set.
+    */
+   public void setUpperBound(double upperBound) {
+       this.upperBound = upperBound;
+   }
+
+   /**
+    * Gets the mathematical function as a string.
+    *
+    * @return the function string.
+    */
+   public String getFunction() {
+       return function;
+   }
+
+   /**
+    * Sets the mathematical function.
+    *
+    * @param function the function string to set.
+    */
+   public void setFunction(String function) {
+       this.function = function;
+   }
+
+   /**
+    * Gets the integration strategy used.
+    *
+    * @return the integration strategy.
+    */
+   public IntegrationStrategyEnum getIntegrationStrategy() {
+       return integrationStrategy;
+   }
+
+   /**
+    * Gets the result table, which stores the computed results.
+    *
+    * @return the result table as a list of PairRecord objects.
+    */
+   public List<PairRecord> getResultTable() {
+       return resultTable;
+   }
+
+   /**
+    * Sets the result table.
+    *
+    * @param resultTable the result table to set, as a list of PairRecord objects.
+    */
+   public void setResultTable(List<PairRecord> resultTable) {
+       this.resultTable = resultTable;
+   }
+
 }
 

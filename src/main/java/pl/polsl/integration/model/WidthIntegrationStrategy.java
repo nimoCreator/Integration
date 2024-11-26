@@ -6,7 +6,7 @@ import java.util.function.BiFunction;
 /**
  * Strategy for performing integration by dividing the area into trapezoids of specified width.
  * 
- * @version 3.0 prototype
+ * @version 3.0 final
  */
 public class WidthIntegrationStrategy extends AbstractIntegrationStrategy {
 

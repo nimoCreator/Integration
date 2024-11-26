@@ -1,28 +1,27 @@
 package pl.polsl.integration.controller;
 
 import java.util.List;
-import pl.polsl.integration.model.IntegrationException;
-import pl.polsl.integration.model.IntegrationModel;
-import pl.polsl.integration.model.PairRecord;
+
+import lombok.*;
+import pl.polsl.integration.model.*;
 import pl.polsl.integration.view.IntegrationView;
 
 /**
  * Controller class for handling integration parameters and executing integration.
  * Author: Sebastian Legierski, InfK4
- * @version 3.0 prototype
+ * @version 3.0 final
  */
+
+//@NoArgsConstructor
 public class IntegrationController {
     private final IntegrationModel integrationModel = new IntegrationModel();
     private final IntegrationView integrationView = new IntegrationView();
-    
-    /** 
-     * Default constructor.
-     * used if want to use the application in Console UI mode
+        
+    /**
+     * Default constructor for the controller.
      */
-    public IntegrationController()
-    {
-    }
-    
+    public IntegrationController() {}
+
     /**
      * Constructor that initializes the controller with command-line arguments.
      * If wrong or no arguments provided, continues to COnsole UI anyways
@@ -51,8 +50,8 @@ public class IntegrationController {
             // console UI mode
 
             integrationModel.setMode(integrationView.selectMode());
-            switch (integrationModel.getMode()) {
-                case 'd' -> {
+            switch (integrationModel.getIntegrationStrategy()) {
+                case IntegrationStrategyEnum.DivisionsCount -> {
                     while(true)
                     {
                         Integer divisions = integrationView.getInt("Enter number of divisions: ");
@@ -67,7 +66,7 @@ public class IntegrationController {
                         }
                     }
                 }
-                case 'w' -> {
+                case IntegrationStrategyEnum.TrapesoidWidth -> {
                     while (true)
                     {
                         Double width = integrationView.getDouble("Enter the width of trapezoid: ");
@@ -113,17 +112,19 @@ public class IntegrationController {
      * Sets the integration mode for the calculation.
      * The mode can be 'd' for divisions or 'w' for width.
      * 
-     * @param c The mode character, either 'd' or 'w'.
+     * @param integrationStrategy Integration Strategy to be set
      * @return An empty string if mode is valid; otherwise, a termination message.
      */
-    public String setMode(char c) {
-        if(c == 'd' || c == 'w')
+    public String setMode(IntegrationStrategyEnum integrationStrategy) {
+        try
         {
-            integrationModel.setMode(c);
+            integrationModel.setIntegrationStrategy(integrationStrategy);
             return "";
         }
-        else
-            return "Invalid mode selected, application will terminate.";
+        catch (IllegalArgumentException e)
+        {
+            return "Invalid mode selected.";
+        }
     }
 
     /**
@@ -136,31 +137,37 @@ public class IntegrationController {
     public void setDwvalue(String text) throws IntegrationException {
         if (text.isEmpty()) throw new IntegrationException("Empty field.");
 
-        if (integrationModel.getMode() == 'd') 
-        {
-            if (!text.matches("\\d+")) throw new IntegrationException("Number of divisions must be a positive integer.");
-            try 
-            {
-                int divisions = Integer.parseInt(text);
-                if (divisions < 1) throw new IntegrationException("Number of divisions must be a positive integer.");
-                integrationModel.setDivisions(divisions);
-            } 
-            catch (NumberFormatException e) 
-            {
-                throw new IntegrationException("Invalid input. Please enter a positive integer.");
+        if (null == integrationModel.getIntegrationStrategy()) 
+            throw new IntegrationException("Invalid mode selected."); 
+        
+        else switch (integrationModel.getIntegrationStrategy()) {
+            case DivisionsCount -> {
+                if (!text.matches("\\d+")) throw new IntegrationException("Number of divisions must be a positive integer.");
+                try
+                {
+                    int divisions = Integer.parseInt(text);
+                    if (divisions < 1) throw new IntegrationException("Number of divisions must be a positive integer.");
+                    integrationModel.setDivisions(divisions);
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new IntegrationException("Invalid input. Please enter a positive integer.");
+                }
             }
-        } 
-        else 
-            try 
-            {
-                double width = Double.parseDouble(text);
-                if (width <= 0) throw new IntegrationException("Width must be a positive number.");
-                integrationModel.setWidth(width);
-            } 
-            catch (NumberFormatException e) 
-            {
-                throw new IntegrationException("Invalid input. Please enter a positive decimal number.");
+            case TrapesoidWidth -> {
+                try
+                {
+                    double width = Double.parseDouble(text);
+                    if (width <= 0) throw new IntegrationException("Width must be a positive number.");
+                    integrationModel.setWidth(width);
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new IntegrationException("Invalid input. Please enter a positive decimal number.");
+                }
             }
+            default -> throw new IntegrationException("Invalid mode selected.");
+        }
     }
 
 
@@ -253,6 +260,33 @@ public class IntegrationController {
     public List<PairRecord> getResultTable() 
     {
         return this.integrationModel.getResultTable();
+    }
+
+    /**
+     * Retrives range of integration
+     * @return PairRecord with lower and upper bound
+     */
+    public PairRecord getRange() {
+        return this.integrationModel.getRange();
+    }
+
+    /**
+     * Retrieves the integration mode.
+     * 
+     * @return The integration mode as a string.
+     */
+    public double getW() {
+        return integrationModel.getWidth();
+    }
+
+    /**
+     * Retrieves the integration mode.
+     * 
+     * @return The integration mode as a string.
+     */
+    public int getD()
+    {
+        return integrationModel.getDivisions();
     }
 
 }

@@ -1,20 +1,24 @@
 package pl.polsl.integration.GUI;
 
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import pl.polsl.integration.controller.IntegrationController;
 import pl.polsl.integration.model.IntegrationException;
+import pl.polsl.integration.model.IntegrationStrategyEnum;
 import pl.polsl.integration.model.PairRecord;
 
 /**
  * GUI class for handling user interaction and displaying the results of trapezoidal integration.
  * Provides a JFrame interface for setting parameters, performing integration, and viewing the results.
  * 
- * @version 3.0 prototype
+ * @version 3.0 final
  * 
  * @see IntegrationController
- * @see Pair
+ * @see PairRecord
  * @see IntegrationException
  */
 public class IntegrationJFrame extends javax.swing.JFrame {
@@ -38,7 +42,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
      */
     private void calculate()
     {
-        integrationController.setMode(dModeRadio.isSelected() ? 'd' : 'w');
+        integrationController.setMode(dModeRadio.isSelected() ? IntegrationStrategyEnum.DivisionsCount : IntegrationStrategyEnum.TrapesoidWidth);
         Boolean valid = true;
 
         try
@@ -61,7 +65,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         {
             startError.setText(e.getMessage());
             valid = false;
-        }
+        } 
 
         try
         {
@@ -103,7 +107,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
             this.clearResultTable();
         }
     }
-       
+
     
     /**
      * Updates the result table to display the calculated (x, y) values from the integration process.
@@ -119,14 +123,31 @@ public class IntegrationJFrame extends javax.swing.JFrame {
             model.addRow(new Object[]{pair.x(), pair.y()});
         }
 
+
+        double sumY = results.stream().mapToDouble(PairRecord::y).sum();
+
+        model.addRow(new Object[]{
+            "SUM * width",
+            sumY * integrationController.getW()
+        });
+
+        model.addRow(new Object[]{
+            "SUM * ( range / divisions )",
+            sumY * (((Function<PairRecord, Double>) (a) -> a.y() - a.x()).apply(integrationController.getRange()) / integrationController.getD()) 
+        });
+
         model.fireTableDataChanged();
     }
     
-    private void setMode(char c)
+    /**
+     * Sets the label for the DW input field based on the selected mode.
+     * @param c The mode character ('d' for divisions, 'w' for width).
+     */
+    private void setMode(IntegrationStrategyEnum integrationStrategy)
     {
-        switch (c) {
-            case 'd' -> dwLabel.setText("Divisions count:");
-            case 'w' -> dwLabel.setText("Trapezoid width:");
+        switch (integrationStrategy) {
+            case IntegrationStrategyEnum.DivisionsCount -> dwLabel.setText("Divisions count:");
+            case IntegrationStrategyEnum.TrapesoidWidth -> dwLabel.setText("Trapezoid width:");
             default -> {
                 dwLabel.setText("Unsupported mode?");
                 JOptionPane.showMessageDialog(null, "Unsupported mode selected!", "", JOptionPane.ERROR_MESSAGE);
@@ -170,7 +191,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
      * @param evt
      */
     private void dModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dModeRadioActionPerformed
-        this.setMode('d');
+        this.setMode(IntegrationStrategyEnum.DivisionsCount);
     }//GEN-LAST:event_dModeRadioActionPerformed
 
     /**
@@ -179,7 +200,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
      * @param evt
      */
     private void tModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tModeRadioActionPerformed
-        this.setMode('w');
+        this.setMode(IntegrationStrategyEnum.TrapesoidWidth);
     }//GEN-LAST:event_tModeRadioActionPerformed
 
 
@@ -190,7 +211,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
      * @param evt The mouse event triggered by selecting the radio button.
      */
     private void dModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dModeRadioMouseClicked
-        this.setMode('d');
+        this.setMode(IntegrationStrategyEnum.DivisionsCount);
     }//GEN-LAST:event_dModeRadioMouseClicked
 
     /**
@@ -200,7 +221,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
      * @param evt The mouse event triggered by selecting the radio button.
      */
     private void tModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tModeRadioMouseClicked
-        this.setMode('w');
+        this.setMode(IntegrationStrategyEnum.TrapesoidWidth);
     }//GEN-LAST:event_tModeRadioMouseClicked
 
     /**
@@ -391,6 +412,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         dwLabel.setToolTipText("Enter Divisions Count or Trapesoid Width in the field on the right");
 
         dwInput.setContentType("number"); // NOI18N
+        dwInput.setText("10");
         dwInput.setToolTipText("Divisions Count or Trapesoid Width, depending on selected mode. For Divisions Count value should be a positive integer. For Trapesoid Width value should be a positive number.");
         dwInput.setMinimumSize(new java.awt.Dimension(1, 1));
         dwScrollPane.setViewportView(dwInput);
@@ -432,6 +454,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         startLabel.setToolTipText("Enter Lower Boundry  into the field on the right");
 
         startInput.setContentType("number"); // NOI18N
+        startInput.setText("1");
         startInput.setToolTipText("Bottom Boundry, value should be a number");
         startInput.setMinimumSize(new java.awt.Dimension(1, 1));
         startScrollPane.setViewportView(startInput);
@@ -472,6 +495,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         endError.setToolTipText("This error message reffers to the field end on the left");
 
         endInput.setContentType("number"); // NOI18N
+        endInput.setText("100");
         endInput.setToolTipText("Top Boundry, value should be a number");
         endInput.setMinimumSize(new java.awt.Dimension(1, 1));
         endScrollPane.setViewportView(endInput);
@@ -512,6 +536,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         functionLabel.setText("Function:");
         functionLabel.setToolTipText("Enter the functon to Integrate into the field on the right");
 
+        functionInput.setText("2*x^2");
         functionInput.setToolTipText("Function formula, should be in format a*x^n+b*x^m...");
         functionInput.setMinimumSize(new java.awt.Dimension(1, 1));
         functionScrollPane.setViewportView(functionInput);

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Interface for integration strategies, allowing different approaches to integration.
  * 
- * @version 3.0 prototype
+ * @version 3.0 final
  */
 public interface IntegrationStrategy {
     
