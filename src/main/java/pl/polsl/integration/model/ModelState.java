@@ -9,5 +9,5 @@ public enum ModelState {
     /**
      * The state of the model.
      */
-    empty, error, ready
+    empty, incomplete, error, ready
 }

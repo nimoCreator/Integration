@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.*;
 
 /**
@@ -69,10 +71,10 @@ public class IntegrationModel {
             {
                 width = Double.parseDouble(params.get("-w"));
                 integrationStrategy = IntegrationStrategyEnum.TrapesoidWidth;
-                if(width < 0)
+                if(width <= 0)
                 {
                     this.modelState = ModelState.error;
-                    throw new IntegrationException("Parameter -w cannot be negative!");
+                    throw new IntegrationException("Parameter -w should be a number greater than zero!");
                 }
             }
             
@@ -117,25 +119,70 @@ public class IntegrationModel {
      * @return true if the state is READY, false otherwise.
      */
     public boolean isReady() {
+        try {
+            this.validate();
+        } catch (IntegrationException e) {
+            // ignores the exception
+        }
         return this.modelState == ModelState.ready;
     }
 
     /**
-     * Sets the integration mode by creating the appropriate strategy.
+     * Validates the model parameters.
      * 
-     * @param mode Character representing the mode ('d' for divisions, 'w' for width).
-     * @throws IllegalArgumentException if the mode is invalid.
+     * @throws IntegrationException if any parameter is invalid.
      */
-    public void setMode(char mode) throws IllegalArgumentException
-    {
-        switch (mode) {
-            case 'd' -> this.setStrategy(new DivisionIntegrationStrategy());
-            case 'w' -> this.setStrategy(new WidthIntegrationStrategy());
-            default -> throw new IllegalArgumentException("Invalid integration mode: " + mode);
+    public void validate() throws IntegrationException {
+        // Ensure lower bound is less than the upper bound, if not, flip the bounds
+        if (lowerBound >= upperBound) {
+            this.flipBounds();
         }
-    }
 
-    
+        // Check if required parameters are set and are valid
+        if (function == null || function.isEmpty()) {
+            this.modelState = ModelState.incomplete;
+            throw new IntegrationException("The function parameter (-f) must be provided and non-empty.");
+        }
+        if (lowerBound == Double.NaN) {
+            this.modelState = ModelState.incomplete;
+            throw new IntegrationException("The lower bound (-min) must be provided.");
+        }
+        if (upperBound == Double.NaN) {
+            this.modelState = ModelState.incomplete;
+            throw new IntegrationException("The upper bound (-max) must be provided.");
+        }
+
+        // Validate polynomial format
+        if (!function.matches("([-+]?\\d*\\*?x(\\^\\d+)?)([-+]\\d*\\*?x(\\^\\d+)?)*")) {
+            this.modelState = ModelState.error;
+            throw new IntegrationException("The provided function string does not match the expected polynomial format.");
+        }
+
+        if (integrationStrategy == null) {
+            this.modelState = ModelState.error;
+            throw new IntegrationException("The integration strategy (either '-d' or '-w') must be set.");
+        }
+
+        switch (integrationStrategy) {
+            case DivisionsCount:
+                if (divisions < 1) {
+                    this.modelState = ModelState.error;
+                    throw new IntegrationException("Divisions count must be greater than 0.");
+                }
+                break;
+            case TrapesoidWidth:
+                if (width <= 0) {
+                    this.modelState = ModelState.error;
+                    throw new IntegrationException("Width must be greater than 0.");
+                }
+                break;
+            default:
+                this.modelState = ModelState.error;
+                throw new IntegrationException("Invalid integration strategy.");
+        }
+
+        this.modelState = ModelState.ready;
+    }
     
     /**
      * Sets the integration mode by creating the appropriate strategy.
@@ -145,10 +192,12 @@ public class IntegrationModel {
      */
     public void setIntegrationStrategy(IntegrationStrategyEnum integrationStrategy) throws IllegalArgumentException
     {
-        this.integrationStrategy = integrationStrategy;
+        this.integrationStrategy = integrationStrategy; 
         switch (integrationStrategy) {
-            case IntegrationStrategyEnum.DivisionsCount -> this.setStrategy(new DivisionIntegrationStrategy());
-            case IntegrationStrategyEnum.TrapesoidWidth -> this.setStrategy(new WidthIntegrationStrategy());
+            case IntegrationStrategyEnum.DivisionsCount -> this.setStrategy(new IntegrationStrategyDivision());
+            case IntegrationStrategyEnum.TrapesoidWidth -> this.setStrategy(new IntegrationStrategyWidth());
+            case IntegrationStrategyEnum.PreciseDivisionsCount -> this.setStrategy(new IntegrationStrategyPreciseDivision());
+            case IntegrationStrategyEnum.PreciseTrapesoidWidth -> this.setStrategy(new IntegrationStrategyPreciseWidth());
             default -> throw new IllegalArgumentException("Invalid integration strategy: " + integrationStrategy);
         }
     }
@@ -179,12 +228,21 @@ public class IntegrationModel {
      * @throws IntegrationException if no strategy is set.
      */
     public double calculate() throws IntegrationException {
+        this.validate();
+        if(!this.isReady())
+        {
+            throw new IntegrationException("Model not ready, fill all required parameters ( DivisionsCount/TrapesoidWidth, LowerBound, UpperBound, Function)");
+        }
         if (strategy == null) {
             throw new IntegrationException("Integration strategy not set.");
         }
-        double wd = 
-            this.integrationStrategy == IntegrationStrategyEnum.DivisionsCount ? this.divisions : 
-            this.integrationStrategy == IntegrationStrategyEnum.TrapesoidWidth ? this.width : 0;
+        double wd;
+        if(null == this.integrationStrategy) wd = 0;
+        else wd = switch (this.integrationStrategy) {
+            case DivisionsCount, PreciseDivisionsCount -> this.divisions;
+            case TrapesoidWidth, PreciseTrapesoidWidth -> this.width;
+            default -> 0;
+        };
         
         return strategy.integrate(wd, lowerBound, upperBound, function, resultTable);
     }

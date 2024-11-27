@@ -13,5 +13,5 @@ public enum IntegrationStrategyEnum {
     /**
      * The state of the model.
      */
-    DivisionsCount, TrapesoidWidth
+    DivisionsCount, TrapesoidWidth, PreciseDivisionsCount, PreciseTrapesoidWidth
 }

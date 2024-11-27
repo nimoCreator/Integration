@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * 
  * @version 3.0 final
  */
-public abstract class AbstractIntegrationStrategy implements IntegrationStrategy {
+public abstract class IntegrationStrategyAbstract implements IntegrationStrategy {
 
     /**
      * Evaluates the polynomial function at a given x value.

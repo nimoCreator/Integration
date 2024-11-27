@@ -43,13 +43,20 @@ public class IntegrationController {
 
     /**
      * Runs the integration process, interacting with the user as needed.
+     * @throws IntegrationException
      */
-    public void run() {
+    @Deprecated
+    public void run() throws IntegrationException {
         if (!integrationModel.isReady()) {
 
             // console UI mode
 
-            integrationModel.setMode(integrationView.selectMode());
+            switch(integrationView.selectMode())
+            {
+                case 'w' -> { integrationModel.setIntegrationStrategy(IntegrationStrategyEnum.TrapesoidWidth); }
+                case 'd' -> { integrationModel.setIntegrationStrategy(IntegrationStrategyEnum.DivisionsCount); }
+                default -> { throw new IntegrationException("Invalid Mode Seleted");}
+            }
             switch (integrationModel.getIntegrationStrategy()) {
                 case IntegrationStrategyEnum.DivisionsCount -> {
                     while(true)

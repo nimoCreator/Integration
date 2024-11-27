@@ -146,8 +146,8 @@ public class IntegrationJFrame extends javax.swing.JFrame {
     private void setMode(IntegrationStrategyEnum integrationStrategy)
     {
         switch (integrationStrategy) {
-            case IntegrationStrategyEnum.DivisionsCount -> dwLabel.setText("Divisions count:");
-            case IntegrationStrategyEnum.TrapesoidWidth -> dwLabel.setText("Trapezoid width:");
+            case IntegrationStrategyEnum.DivisionsCount, IntegrationStrategyEnum.PreciseDivisionsCount -> dwLabel.setText("Divisions count:");
+            case IntegrationStrategyEnum.TrapesoidWidth, IntegrationStrategyEnum.PreciseTrapesoidWidth -> dwLabel.setText("Trapezoid width:");
             default -> {
                 dwLabel.setText("Unsupported mode?");
                 JOptionPane.showMessageDialog(null, "Unsupported mode selected!", "", JOptionPane.ERROR_MESSAGE);
@@ -289,6 +289,8 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         modeLabel = new javax.swing.JLabel();
         dModeRadio = new javax.swing.JRadioButton();
         tModeRadio = new javax.swing.JRadioButton();
+        pdModeRadio = new javax.swing.JRadioButton();
+        pdModeRadio2 = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         dwLabel = new javax.swing.JLabel();
         dwScrollPane = new javax.swing.JScrollPane();
@@ -345,7 +347,6 @@ public class IntegrationJFrame extends javax.swing.JFrame {
 
         dwButtonGroup.add(dModeRadio);
         dModeRadio.setMnemonic('d');
-        dModeRadio.setSelected(true);
         dModeRadio.setText("divisions count");
         dModeRadio.setToolTipText("Set to divisons count iteration mode");
         dModeRadio.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -374,6 +375,37 @@ public class IntegrationJFrame extends javax.swing.JFrame {
             }
         });
 
+        dwButtonGroup.add(pdModeRadio);
+        pdModeRadio.setMnemonic('d');
+        pdModeRadio.setText("precise divisions count");
+        pdModeRadio.setToolTipText("Set to divisons count iteration mode");
+        pdModeRadio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pdModeRadioMouseClicked(evt);
+            }
+        });
+        pdModeRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pdModeRadioActionPerformed(evt);
+            }
+        });
+
+        dwButtonGroup.add(pdModeRadio2);
+        pdModeRadio2.setMnemonic('d');
+        pdModeRadio2.setSelected(true);
+        pdModeRadio2.setText("precise trapesoid width");
+        pdModeRadio2.setToolTipText("Set to divisons count iteration mode");
+        pdModeRadio2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pdModeRadio2MouseClicked(evt);
+            }
+        });
+        pdModeRadio2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pdModeRadio2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -382,9 +414,13 @@ public class IntegrationJFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(modeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(dModeRadio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tModeRadio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(tModeRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pdModeRadio2, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                    .addComponent(pdModeRadio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -394,9 +430,13 @@ public class IntegrationJFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(modeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(dModeRadio)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dModeRadio)
+                            .addComponent(pdModeRadio))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tModeRadio)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tModeRadio)
+                            .addComponent(pdModeRadio2))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -638,6 +678,22 @@ public class IntegrationJFrame extends javax.swing.JFrame {
     private void calcualteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcualteButtonActionPerformed
         this.calculate();
     }//GEN-LAST:event_calcualteButtonActionPerformed
+
+    private void pdModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdModeRadioMouseClicked
+        this.setMode(IntegrationStrategyEnum.PreciseDivisionsCount);
+    }//GEN-LAST:event_pdModeRadioMouseClicked
+
+    private void pdModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdModeRadioActionPerformed
+        this.setMode(IntegrationStrategyEnum.PreciseDivisionsCount);
+    }//GEN-LAST:event_pdModeRadioActionPerformed
+
+    private void pdModeRadio2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdModeRadio2MouseClicked
+        this.setMode(IntegrationStrategyEnum.PreciseTrapesoidWidth);
+    }//GEN-LAST:event_pdModeRadio2MouseClicked
+
+    private void pdModeRadio2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdModeRadio2ActionPerformed
+        this.setMode(IntegrationStrategyEnum.PreciseTrapesoidWidth);
+    }//GEN-LAST:event_pdModeRadio2ActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton calcualteButton;
@@ -664,6 +720,8 @@ public class IntegrationJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableResult;
     private javax.swing.JLabel modeLabel;
+    private javax.swing.JRadioButton pdModeRadio;
+    private javax.swing.JRadioButton pdModeRadio2;
     private javax.swing.JTextField resultOutput;
     private javax.swing.JLabel startError;
     private javax.swing.JTextPane startInput;

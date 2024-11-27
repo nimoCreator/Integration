@@ -8,12 +8,12 @@ import java.util.function.BiFunction;
  * 
  * @version 3.0 final
  */
-public class DivisionIntegrationStrategy extends AbstractIntegrationStrategy {
+public class IntegrationStrategyDivision extends IntegrationStrategyAbstract {
 
     /**
      * Constructor for the division-based integration strategy.
      */
-    public DivisionIntegrationStrategy() {
+    public IntegrationStrategyDivision() {
     }
 
     @Override

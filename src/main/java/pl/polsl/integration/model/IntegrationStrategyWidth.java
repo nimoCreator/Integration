@@ -8,12 +8,12 @@ import java.util.function.BiFunction;
  * 
  * @version 3.0 final
  */
-public class WidthIntegrationStrategy extends AbstractIntegrationStrategy {
+public class IntegrationStrategyWidth extends IntegrationStrategyAbstract {
 
     /**
      * Constructor for the width-based integration strategy.
      */
-    public WidthIntegrationStrategy() {
+    public IntegrationStrategyWidth() {
     }
 
     @Override
