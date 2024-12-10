@@ -6,7 +6,7 @@ import java.util.function.BiFunction;
 /**
  * Strategy for performing precise integration by dividing the area into a specified number of trapezoids.
  * 
- * @version 3.0 final
+ * @version 4.0 final
  */
 public class IntegrationStrategyPreciseDivision extends IntegrationStrategyAbstract {
 

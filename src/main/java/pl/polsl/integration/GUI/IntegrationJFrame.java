@@ -15,7 +15,7 @@ import pl.polsl.integration.model.PairRecord;
  * GUI class for handling user interaction and displaying the results of trapezoidal integration.
  * Provides a JFrame interface for setting parameters, performing integration, and viewing the results.
  * 
- * @version 3.0 final
+ * @version 4.0 final
  * 
  * @see IntegrationController
  * @see PairRecord

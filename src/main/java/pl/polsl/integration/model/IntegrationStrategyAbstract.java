@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * Abstract class providing common functionality for integration strategies,
  * including polynomial function evaluation.
  * 
- * @version 3.0 final
+ * @version 4.0 final
  */
 public abstract class IntegrationStrategyAbstract implements IntegrationStrategy {
 

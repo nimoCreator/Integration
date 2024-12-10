@@ -1,18 +1,18 @@
 package pl.polsl.integration.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import lombok.*;
 import pl.polsl.integration.model.*;
 import pl.polsl.integration.view.IntegrationView;
 
 /**
  * Controller class for handling integration parameters and executing integration.
  * Author: Sebastian Legierski, InfK4
- * @version 3.0 final
+ * @version 4.0 final
  */
 
-//@NoArgsConstructor
 public class IntegrationController {
     private final IntegrationModel integrationModel = new IntegrationModel();
     private final IntegrationView integrationView = new IntegrationView();
@@ -27,13 +27,14 @@ public class IntegrationController {
      * If wrong or no arguments provided, continues to COnsole UI anyways
      * @param args Command-line arguments.
      */
+    @Deprecated
     public IntegrationController(String[] args) {
         if (args.length == 0) {
             integrationView.displayMessage("No parameters provided. Application with continue in console UI mode.");
         }
         
         try {
-            integrationModel.readArgs(args);
+            readArgs(args);
         } catch (IntegrationException e) {
             integrationView.displayError(e.getMessage());
             integrationView.displayCorrectFormatting();
@@ -41,6 +42,84 @@ public class IntegrationController {
         }
     }
 
+    
+    /**
+     * Reads command-line arguments for integration parameters and sets them in the model.
+     * @param args Command-line arguments.
+     * @throws IntegrationException if any required argument is missing or invalid.
+     */
+    public void readArgs(String[] args) throws IntegrationException {
+        Map<String, String> params = new HashMap<>();
+
+        for (int i = 0; i < args.length; i += 2) {
+            if (i + 1 < args.length) {
+                params.put(args[i], args[i + 1]);
+            } else {
+                throw new IntegrationException("Missing value for parameter: " + args[i]);
+            }
+        }
+
+        try {
+            // Validate presence of required parameters
+            if (!params.containsKey("-w") && !params.containsKey("-d")) {
+                throw new IntegrationException("Parameter either '-d' (divisions) or '-w' (width) is required.");
+            }
+
+            if (params.containsKey("-d")) {
+                int divisions = Integer.parseInt(params.get("-d"));
+                integrationModel.setDivisions(divisions); // Set divisions in the model
+                integrationModel.setIntegrationStrategy(IntegrationStrategyEnum.DivisionsCount);
+                
+                if (divisions < 1) {
+                    throw new IntegrationException("Parameter -d should be a positive integer.");
+                }
+            } else {
+                double width = Double.parseDouble(params.get("-w"));
+                integrationModel.setWidth(width); // Set width in the model
+                integrationModel.setIntegrationStrategy(IntegrationStrategyEnum.TrapesoidWidth);
+                
+                if (width <= 0) {
+                    throw new IntegrationException("Parameter -w should be a number greater than zero!");
+                }
+            }
+
+            // Set lower and upper bounds
+            if (!params.containsKey("-min")) {
+                throw new IntegrationException("Parameter '-min' (lower bound) is required.");
+            }
+            double lowerBound = Double.parseDouble(params.get("-min"));
+            integrationModel.setLowerBound(lowerBound);
+
+            if (!params.containsKey("-max")) {
+                throw new IntegrationException("Parameter '-max' (upper bound) is required.");
+            }
+            double upperBound = Double.parseDouble(params.get("-max"));
+            integrationModel.setUpperBound(upperBound);
+
+            // Set function
+            if (!params.containsKey("-f")) {
+                throw new IntegrationException("Parameter '-f' (function) is required.");
+            }
+            String function = params.get("-f");
+            integrationModel.setFunction(function); // Set function in the model
+
+            if (lowerBound > upperBound) {
+                integrationModel.flipBounds(); // Flip bounds if necessary
+            }
+
+            // Validate function format
+            if (!function.matches("([-+]?\\d*\\*?x(\\^\\d+)?)([-+]\\d*\\*?x(\\^\\d+)?)*")) {
+                throw new IntegrationException("Invalid polynomial format.");
+            }
+
+            this.integrationModel.validate();
+
+        } catch (NumberFormatException e) {
+            throw new IntegrationException("Invalid number format in parameters: " + e.getMessage());
+        }
+    }
+    
+    
     /**
      * Runs the integration process, interacting with the user as needed.
      * @throws IntegrationException
@@ -249,17 +328,6 @@ public class IntegrationController {
     }
 
     /**
-     * Reads and processes command-line arguments for setting up integration parameters.
-     * 
-     * @param args The command-line arguments containing integration parameters.
-     * @throws IntegrationException If the arguments are invalid or incorrectly formatted.
-     */
-    public void readArgs(String[] args) throws IntegrationException 
-    {
-        integrationModel.readArgs(args);
-    }
-
-    /**
      * Retrieves the result table, which contains intermediate integration steps.
      * 
      * @return A list of pairs, where each pair contains an x-value and the corresponding function value.
@@ -296,4 +364,20 @@ public class IntegrationController {
         return integrationModel.getDivisions();
     }
 
+    /**
+     * Retrieves the lower bound of the integration range.
+     * 
+     * @return The lower bound as a string.
+     */
+    public String getFunction() {
+        return integrationModel.getFunction();
+    }
+
+    /**
+     * Retrieves the lower bound of the integration range.
+     * @return The lower bound as a string.
+     */
+    public IntegrationStrategyEnum getIntegrationStrategy() {
+        return integrationModel.getIntegrationStrategy();
+    }
 }

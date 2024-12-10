@@ -7,7 +7,7 @@ package pl.polsl.integration.model;
 /**
  * Interface for integration strategies, allowing different approaches to integration.
  * 
- * @version 3.0 final
+ * @version 4.0 final
  */
 public enum IntegrationStrategyEnum {
     /**
