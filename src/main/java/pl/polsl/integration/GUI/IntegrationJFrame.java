@@ -42,7 +42,6 @@ public class IntegrationJFrame extends javax.swing.JFrame {
      */
     private void calculate()
     {
-        integrationController.setMode(dModeRadio.isSelected() ? IntegrationStrategyEnum.DivisionsCount : IntegrationStrategyEnum.TrapesoidWidth);
         Boolean valid = true;
 
         try
@@ -146,8 +145,26 @@ public class IntegrationJFrame extends javax.swing.JFrame {
     private void setMode(IntegrationStrategyEnum integrationStrategy)
     {
         switch (integrationStrategy) {
-            case IntegrationStrategyEnum.DivisionsCount, IntegrationStrategyEnum.PreciseDivisionsCount -> dwLabel.setText("Divisions count:");
-            case IntegrationStrategyEnum.TrapesoidWidth, IntegrationStrategyEnum.PreciseTrapesoidWidth -> dwLabel.setText("Trapezoid width:");
+            case IntegrationStrategyEnum.DivisionsCount ->
+            {
+                dwLabel.setText("Divisions count:");
+                integrationController.setIntegrationStrategy(IntegrationStrategyEnum.DivisionsCount);
+            }
+            case IntegrationStrategyEnum.PreciseDivisionsCount -> 
+            {
+                dwLabel.setText("Divisions count:");
+                integrationController.setIntegrationStrategy(IntegrationStrategyEnum.PreciseDivisionsCount);
+            }
+            case IntegrationStrategyEnum.TrapesoidWidth -> 
+            {
+                dwLabel.setText("Trapezoid width:");
+                integrationController.setIntegrationStrategy(IntegrationStrategyEnum.TrapesoidWidth);
+            }
+            case IntegrationStrategyEnum.PreciseTrapesoidWidth -> 
+            {
+                dwLabel.setText("Trapezoid width:");
+                integrationController.setIntegrationStrategy(IntegrationStrategyEnum.PreciseTrapesoidWidth);
+            }
             default -> {
                 dwLabel.setText("Unsupported mode?");
                 JOptionPane.showMessageDialog(null, "Unsupported mode selected!", "", JOptionPane.ERROR_MESSAGE);
@@ -185,44 +202,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
 
 
 
-    /**
-     * Triggered when the "Divisions mode" radio button is selected.
-     * Updates the label to indicate that the DW input represents "Divisions count."
-     * @param evt
-     */
-    private void dModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dModeRadioActionPerformed
-        this.setMode(IntegrationStrategyEnum.DivisionsCount);
-    }//GEN-LAST:event_dModeRadioActionPerformed
 
-    /**
-     * Triggered when the "Width mode" radio button is selected.
-     * Updates the label to indicate that the DW input represents "Trapezoid width."
-     * @param evt
-     */
-    private void tModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tModeRadioActionPerformed
-        this.setMode(IntegrationStrategyEnum.TrapesoidWidth);
-    }//GEN-LAST:event_tModeRadioActionPerformed
-
-
-    /**
-     * Triggered when the "Divisions mode" radio button is selected.
-     * Updates the label to indicate that the DW input represents "Divisions count."
-     * 
-     * @param evt The mouse event triggered by selecting the radio button.
-     */
-    private void dModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dModeRadioMouseClicked
-        this.setMode(IntegrationStrategyEnum.DivisionsCount);
-    }//GEN-LAST:event_dModeRadioMouseClicked
-
-    /**
-     * Triggered when the "Width mode" radio button is selected.
-     * Updates the label to indicate that the DW input represents "Trapezoid width."
-     * 
-     * @param evt The mouse event triggered by selecting the radio button.
-     */
-    private void tModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tModeRadioMouseClicked
-        this.setMode(IntegrationStrategyEnum.TrapesoidWidth);
-    }//GEN-LAST:event_tModeRadioMouseClicked
 
     /**
      * The main method to launch the GUI application.
@@ -376,7 +356,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         });
 
         dwButtonGroup.add(pdModeRadio);
-        pdModeRadio.setMnemonic('d');
+        pdModeRadio.setMnemonic('f');
         pdModeRadio.setText("precise divisions count");
         pdModeRadio.setToolTipText("Set to divisons count iteration mode");
         pdModeRadio.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -391,18 +371,17 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         });
 
         dwButtonGroup.add(pdModeRadio2);
-        pdModeRadio2.setMnemonic('d');
-        pdModeRadio2.setSelected(true);
+        pdModeRadio2.setMnemonic('y');
         pdModeRadio2.setText("precise trapesoid width");
         pdModeRadio2.setToolTipText("Set to divisons count iteration mode");
         pdModeRadio2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                pdModeRadio2MouseClicked(evt);
+                ptModeRadioMouseClicked(evt);
             }
         });
         pdModeRadio2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pdModeRadio2ActionPerformed(evt);
+                ptModeRadioActionPerformed(evt);
             }
         });
 
@@ -494,7 +473,7 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         startLabel.setToolTipText("Enter Lower Boundry  into the field on the right");
 
         startInput.setContentType("number"); // NOI18N
-        startInput.setText("1");
+        startInput.setText("0");
         startInput.setToolTipText("Bottom Boundry, value should be a number");
         startInput.setMinimumSize(new java.awt.Dimension(1, 1));
         startScrollPane.setViewportView(startInput);
@@ -679,6 +658,28 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         this.calculate();
     }//GEN-LAST:event_calcualteButtonActionPerformed
 
+
+
+
+
+
+
+    private void dModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dModeRadioActionPerformed
+        this.setMode(IntegrationStrategyEnum.DivisionsCount);
+    }//GEN-LAST:event_dModeRadioActionPerformed
+
+    private void tModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tModeRadioActionPerformed
+        this.setMode(IntegrationStrategyEnum.TrapesoidWidth);
+    }//GEN-LAST:event_tModeRadioActionPerformed
+
+    private void dModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dModeRadioMouseClicked
+        this.setMode(IntegrationStrategyEnum.DivisionsCount);
+    }//GEN-LAST:event_dModeRadioMouseClicked
+
+    private void tModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tModeRadioMouseClicked
+        this.setMode(IntegrationStrategyEnum.TrapesoidWidth);
+    }//GEN-LAST:event_tModeRadioMouseClicked
+
     private void pdModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdModeRadioMouseClicked
         this.setMode(IntegrationStrategyEnum.PreciseDivisionsCount);
     }//GEN-LAST:event_pdModeRadioMouseClicked
@@ -687,14 +688,24 @@ public class IntegrationJFrame extends javax.swing.JFrame {
         this.setMode(IntegrationStrategyEnum.PreciseDivisionsCount);
     }//GEN-LAST:event_pdModeRadioActionPerformed
 
-    private void pdModeRadio2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdModeRadio2MouseClicked
+    private void ptModeRadioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptModeRadioMouseClicked
         this.setMode(IntegrationStrategyEnum.PreciseTrapesoidWidth);
-    }//GEN-LAST:event_pdModeRadio2MouseClicked
+    }//GEN-LAST:event_ptModeRadioMouseClicked
 
-    private void pdModeRadio2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdModeRadio2ActionPerformed
+    private void ptModeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptModeRadioActionPerformed
         this.setMode(IntegrationStrategyEnum.PreciseTrapesoidWidth);
-    }//GEN-LAST:event_pdModeRadio2ActionPerformed
+    }//GEN-LAST:event_ptModeRadioActionPerformed
     
+
+
+
+
+
+
+
+
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton calcualteButton;
     private javax.swing.JRadioButton dModeRadio;

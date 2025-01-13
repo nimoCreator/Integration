@@ -1,6 +1,5 @@
 package pl.polsl.integration.model;
 
-import java.util.HashSet;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.params.*;
@@ -211,20 +210,23 @@ public class IntegrationModelTest {
         }
     }
 
-    /**
-     * Test for flipping the bounds in the {@link IntegrationModel#flipBounds()} method.
-     * This test checks that the lower and upper bounds are correctly swapped when the flipBounds method is called.
-     */
-    @Test
-    public void testFlipBounds() {
+    @ParameterizedTest
+    @CsvSource({
+        "0, 10",  // Przypadek standardowy
+        "-5, 5",  // Przypadek z ujemnymi liczbami
+        "1, 1"     // Graniczny przypadek (granice równe)
+    })
+    void testFlipBounds(double min, double max) {
         IntegrationModel instance = new IntegrationModel();
-        instance.setLowerBound(0);
-        instance.setUpperBound(10);
-        instance.flipBounds();
-        assertEquals(10, instance.getLowerBound(), "Lower bound should be 10 after flipping.");
-        assertEquals(0, instance.getUpperBound(), "Upper bound should be 0 after flipping.");
-    }
 
+        instance.setLowerBound(min);
+        instance.setUpperBound(max);
+        
+        instance.flipBounds();
+        
+        assertEquals(min, instance.getUpperBound());
+        assertEquals(max, instance.getLowerBound());
+    }
 
     /**
      * Test for the calculation of the integral in the {@link IntegrationModel#calculate()} method.

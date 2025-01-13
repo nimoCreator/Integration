@@ -201,7 +201,7 @@ public class IntegrationController {
      * @param integrationStrategy Integration Strategy to be set
      * @return An empty string if mode is valid; otherwise, a termination message.
      */
-    public String setMode(IntegrationStrategyEnum integrationStrategy) {
+    public String setIntegrationStrategy(IntegrationStrategyEnum integrationStrategy) {
         try
         {
             integrationModel.setIntegrationStrategy(integrationStrategy);
@@ -227,7 +227,7 @@ public class IntegrationController {
             throw new IntegrationException("Invalid mode selected."); 
         
         else switch (integrationModel.getIntegrationStrategy()) {
-            case DivisionsCount -> {
+            case DivisionsCount, PreciseDivisionsCount -> {
                 if (!text.matches("\\d+")) throw new IntegrationException("Number of divisions must be a positive integer.");
                 try
                 {
@@ -240,7 +240,7 @@ public class IntegrationController {
                     throw new IntegrationException("Invalid input. Please enter a positive integer.");
                 }
             }
-            case TrapesoidWidth -> {
+            case TrapesoidWidth, PreciseTrapesoidWidth -> {
                 try
                 {
                     double width = Double.parseDouble(text);

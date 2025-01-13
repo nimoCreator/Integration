@@ -1,12 +1,7 @@
 package pl.polsl.integration.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Model class for handling parameters and performing trapezoidal integration.
  * @author Sebastian Legierski InfK4
@@ -74,13 +69,13 @@ public class IntegrationModel {
         }
 
         switch (integrationStrategy) {
-            case DivisionsCount:
+            case DivisionsCount, PreciseDivisionsCount:
                 if (divisions < 1) {
                     this.modelState = ModelState.error;
                     throw new IntegrationException("Divisions count must be greater than 0.");
                 }
                 break;
-            case TrapesoidWidth:
+            case TrapesoidWidth, PreciseTrapesoidWidth:
                 if (width <= 0) {
                     this.modelState = ModelState.error;
                     throw new IntegrationException("Width must be greater than 0.");
@@ -126,10 +121,12 @@ public class IntegrationModel {
      * Flips the lower and upper bounds if needed.
      */
     public void flipBounds() {
-        upperBound = upperBound + lowerBound;
-        lowerBound = upperBound - lowerBound;
-        upperBound = lowerBound - upperBound;
+        double temp = lowerBound;
+        this.lowerBound = upperBound;
+        this.upperBound = temp;
     }
+
+
 
     /**
      * Calculates the integration result using the selected strategy.
@@ -212,7 +209,7 @@ public class IntegrationModel {
     * @return the lower bound value.
     */
    public double getLowerBound() {
-       return lowerBound;
+       return this.lowerBound;
    }
 
    /**
@@ -230,7 +227,7 @@ public class IntegrationModel {
     * @return the upper bound value.
     */
    public double getUpperBound() {
-       return upperBound;
+       return this.upperBound;
    }
 
    /**
